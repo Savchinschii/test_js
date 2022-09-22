@@ -1,45 +1,15 @@
-const names = ['Donald', 'Alex', 'Bob', 'alex', '100', 'Юрий', 'игорь']
-
-console.log(names.sort() === names)
-
-//1. сортирует строки из коробки
-//2. сортирует по алфавиту (unicode)
-//3. работает мутабельно (сортирует на месте, переставляет элементы внутри текущего массива)
-//4. возвращает ссылку на исходный массив
-//5. с ним часто используется reverses
-
-const numbers = [100, 1000, 9, 88]
-
-console.log(numbers.sort())
-
-const compareFn = (a, b) => {
-    if (a < b) {
-        return -1000
-    } else {
-        return 1000
-    }
-}
-
-// const compareFn = (a, b) => a - b
-
 const students = [
     {
         name: "Bob",
         age: 22,
         isMarried: true,
-        scores: 95
+        scores: 85
     },
     {
         name: "Alex",
-        age: 23,
-        isMarried: true,
-        scores: 89
-    },
-    {
-        name: "Helge",
         age: 21,
         isMarried: true,
-        scores: 89
+        scores: 90,
     },
     {
         name: "Nick",
@@ -51,42 +21,135 @@ const students = [
         name: "John",
         age: 19,
         isMarried: false,
-        scores: 121
+        scores: 100
     },
     {
-        name: "alex",
-        age: 23,
-        isMarried: true,
-        scores: 89
+        name: "Helen",
+        age: 20,
+        isMarried: false,
+        scores: 110
+    },
+    {
+        name: "Ann",
+        age: 20,
+        isMarried: false,
+        scores: 105
     },
 ];
-const ageSort = students.sort((a, b) => a.scores - b.scores);
 
-console.log(ageSort)
-
-// const nameSort = students.sort((a, b) => a.name < b.name ? -1 : 1)
-// const nameSort = students.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1)
-// const nameSort = students.sort((a, b) => a.name.localeCompare(b.name))
-
-// console.log(nameSort)
-
-//// bubble sort
-
-const nums = [12, 45, 91, 23, 34, 9, 77, 1]
-
-
-for (let j = 0; j < nums.length - 1; j++) {
-    let isSorted = true
-    for (let i = 0; i < nums.length - 1; i++) {
-        if (nums[i] > nums[i + 1]) {
-            isSorted = false;
-            // let temp = nums[i]
-            // nums[i] = nums[i + 1]
-            // nums[i + 1] = temp
-            [nums[i], nums[i + 1]] = [nums[i + 1], nums[i]]
-        }
-    }
-    if (isSorted) break
+const user = {
+    name: "Bob",
+    age: 23,
+    friends: ["Alex", "Nick", "John"]
 }
 
-console.log(nums)
+//1. Создайте поверхностную копию объекта user
+let copyUser = {...user};
+
+//Проверка:
+console.log(user===copyUser)
+console.log(user.friends===copyUser.friends)
+// - что должно быть в консоли?
+
+//2. Полная (глубокая) копия объекта user
+// let deepCopyUser = JSON.parse(JSON.stringify(user));
+let deepCopyUser = {...user, friends: [...user.friends]};
+
+//Проверка:
+console.log(user===deepCopyUser)
+console.log(user.friends===deepCopyUser.friends)
+// - что должно быть в консоли?
+
+//3. Поверхностная копия массива students
+// let copyStudents = students.slice();
+let copyStudents = {...students};
+
+//Проверка:
+console.log(copyStudents === students)
+console.log(copyStudents[0] === students[0])
+
+//что должно быть в консоли?
+
+
+//4*. Полная (глубокая) копия массива students (map)
+let deepCopyStudents = students.map(el=>({...el}));
+
+//Проверка:
+console.log(deepCopyStudents === students)
+console.log(deepCopyStudents[0].name === students[0].name)
+console.log(deepCopyStudents[1].scores === students[1].scores)
+console.log(deepCopyStudents[2].age === students[2].age)
+// - что должно быть в консоли?
+
+// NB!!! Далее все преобразования выполняем не модифицируя исходный массив students
+// Вывод результатов - в консоль
+
+//5. Отсортируйте копию массива deepCopyStudents по алфавиту (sort)
+// let sortedByName = deepCopyStudents.sort((a, b) => a.name < b.name ? -1 : 1);
+let sortedByName = deepCopyStudents.sort((a, b) => a.name.localeCompare(b.name));
+console.log(sortedByName);
+
+//5a. Отсортируйте deepCopyStudents по успеваемости(лучший идёт первым)(sort)
+// let sortedByScores = deepCopyStudents.sort((a,b)=> a.scores < b.scores ? 1000 : -1000);
+let sortedByScores = deepCopyStudents.sort((a,b)=> b.scores - a.scores);
+console.log(sortedByScores);
+
+//6. Сформируйте массив студентов, у которых 100 и более баллов (filter)
+let  bestStudents = students.filter(el=>el.scores > 100);
+console.log(bestStudents)
+
+//6a. Получите массив ("вырежьте") из трёх лучших студентов из массива deepCopyStudents (splice)
+//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+
+let topStudents = deepCopyStudents.splice(0, 3);
+console.log(topStudents)
+console.log(deepCopyStudents)
+// - не разобрался как правильно работать с splice
+
+//6b. Объедините массивы deepCopyStudents и topStudents так,
+//чтоб сохранился порядок сортировки (spread-оператор || concat)
+let newDeepCopyStudents = [...topStudents, ...deepCopyUser];
+console.log(newDeepCopyStudents)
+
+
+//7. Сформируйте массив холостых студентов (filter)
+// let notMarriedStudents = students.filter(el=>el.isMarried === false);
+let notMarriedStudents = students.filter(el=>!el.isMarried);
+console.log(notMarriedStudents)
+
+//8. Сформируйте массив имён студентов (map)
+let studentsNames = students.map(el=>el.name);
+console.log(studentsNames)
+
+//8a. Сформируйте строку из имён студентов, разделённых
+// - пробелом (join)
+// - запятой (join)
+let namesWithSpace = studentsNames.join(' ');
+console.log(namesWithSpace)
+let namesWithComma = studentsNames.join(', ');
+console.log(namesWithComma)
+
+//9. Добавьте всем студентам свойство "isStudent" со значением true (map)
+let trueStudents = students.map(el => ({...el, isStudent:true}));
+console.log(trueStudents)
+
+//10. Nick женился. Выполните соответствующие преобразование массива students (map)
+let studentsWithMarriedNick = students.map(el=>el.name === 'Nick' ? {...el, isMarried: true} : el);
+console.log(studentsWithMarriedNick)
+
+//11. Найдите студента по имени Ann (find)
+let ann = students.find(el=>el.name === 'Ann');
+console.log(ann)
+
+//12. Найдите студента с самым высоким баллом (reduce)
+// - c помощью reduce
+// - *не испльзуя методы массивов и Math.max()*
+let bestStudent = students.reduce((topStudents, student) => topStudents.scores > student.scores ? topStudents : student);
+console.log(bestStudent)
+
+//13. Найдите сумму баллов всех студентов (reduce)
+let scoresSum = students.reduce((sum,student) => sum + student.scores, 0 );
+console.log(scoresSum)
+
+
+
