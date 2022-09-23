@@ -3,13 +3,13 @@ const students = [
         name: "Bob",
         age: 22,
         isMarried: true,
-        scores: 85
+        scores: 85,
     },
     {
         name: "Alex",
         age: 21,
         isMarried: true,
-        scores: 90,
+        scores: 89
     },
     {
         name: "Nick",
@@ -22,134 +22,88 @@ const students = [
         age: 19,
         isMarried: false,
         scores: 100
-    },
-    {
-        name: "Helen",
-        age: 20,
-        isMarried: false,
-        scores: 110
-    },
-    {
-        name: "Ann",
-        age: 20,
-        isMarried: false,
-        scores: 105
-    },
+    }
 ];
 
-const user = {
-    name: "Bob",
-    age: 23,
-    friends: ["Alex", "Nick", "John"]
+
+const getNames = (array)=>{
+    const result = [];
+    const getValueForResult = el => el.name
+    for (let i = 0; i < array.length;i++){
+        const newValue = getValueForResult(array[i])
+        result[i] = newValue
+    }
+    return result
 }
-
-//1. Создайте поверхностную копию объекта user
-let copyUser = {...user};
-
-//Проверка:
-console.log(user===copyUser)
-console.log(user.friends===copyUser.friends)
-// - что должно быть в консоли?
-
-//2. Полная (глубокая) копия объекта user
-// let deepCopyUser = JSON.parse(JSON.stringify(user));
-let deepCopyUser = {...user, friends: [...user.friends]};
-
-//Проверка:
-console.log(user===deepCopyUser)
-console.log(user.friends===deepCopyUser.friends)
-// - что должно быть в консоли?
-
-//3. Поверхностная копия массива students
-// let copyStudents = students.slice();
-let copyStudents = {...students};
-
-//Проверка:
-console.log(copyStudents === students)
-console.log(copyStudents[0] === students[0])
-
-//что должно быть в консоли?
+console.log(getNames(students))
 
 
-//4*. Полная (глубокая) копия массива students (map)
-let deepCopyStudents = students.map(el=>({...el}));
-
-//Проверка:
-console.log(deepCopyStudents === students)
-console.log(deepCopyStudents[0].name === students[0].name)
-console.log(deepCopyStudents[1].scores === students[1].scores)
-console.log(deepCopyStudents[2].age === students[2].age)
-// - что должно быть в консоли?
-
-// NB!!! Далее все преобразования выполняем не модифицируя исходный массив students
-// Вывод результатов - в консоль
-
-//5. Отсортируйте копию массива deepCopyStudents по алфавиту (sort)
-// let sortedByName = deepCopyStudents.sort((a, b) => a.name < b.name ? -1 : 1);
-let sortedByName = deepCopyStudents.sort((a, b) => a.name.localeCompare(b.name));
-console.log(sortedByName);
-
-//5a. Отсортируйте deepCopyStudents по успеваемости(лучший идёт первым)(sort)
-// let sortedByScores = deepCopyStudents.sort((a,b)=> a.scores < b.scores ? 1000 : -1000);
-let sortedByScores = deepCopyStudents.sort((a,b)=> b.scores - a.scores);
-console.log(sortedByScores);
-
-//6. Сформируйте массив студентов, у которых 100 и более баллов (filter)
-let  bestStudents = students.filter(el=>el.scores > 100);
-console.log(bestStudents)
-
-//6a. Получите массив ("вырежьте") из трёх лучших студентов из массива deepCopyStudents (splice)
-//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
-
-let topStudents = deepCopyStudents.splice(0, 3);
-console.log(topStudents)
-console.log(deepCopyStudents)
-// - не разобрался как правильно работать с splice
-
-//6b. Объедините массивы deepCopyStudents и topStudents так,
-//чтоб сохранился порядок сортировки (spread-оператор || concat)
-let newDeepCopyStudents = [...topStudents, ...deepCopyUser];
-console.log(newDeepCopyStudents)
+const getNames1 = (array)=>{
+    const result = [];
+    const getValueForResult = el => el.scores
+    for (let i = 0; i < array.length;i++){
+        const newValue = getValueForResult(array[i])
+        result[i] = newValue
+    }
+    return result
+}
+console.log(getNames1(students))
 
 
-//7. Сформируйте массив холостых студентов (filter)
-// let notMarriedStudents = students.filter(el=>el.isMarried === false);
-let notMarriedStudents = students.filter(el=>!el.isMarried);
-console.log(notMarriedStudents)
-
-//8. Сформируйте массив имён студентов (map)
-let studentsNames = students.map(el=>el.name);
-console.log(studentsNames)
-
-//8a. Сформируйте строку из имён студентов, разделённых
-// - пробелом (join)
-// - запятой (join)
-let namesWithSpace = studentsNames.join(' ');
-console.log(namesWithSpace)
-let namesWithComma = studentsNames.join(', ');
-console.log(namesWithComma)
-
-//9. Добавьте всем студентам свойство "isStudent" со значением true (map)
-let trueStudents = students.map(el => ({...el, isStudent:true}));
-console.log(trueStudents)
-
-//10. Nick женился. Выполните соответствующие преобразование массива students (map)
-let studentsWithMarriedNick = students.map(el=>el.name === 'Nick' ? {...el, isMarried: true} : el);
-console.log(studentsWithMarriedNick)
-
-//11. Найдите студента по имени Ann (find)
-let ann = students.find(el=>el.name === 'Ann');
-console.log(ann)
-
-//12. Найдите студента с самым высоким баллом (reduce)
-// - c помощью reduce
-// - *не испльзуя методы массивов и Math.max()*
-let bestStudent = students.reduce((topStudents, student) => topStudents.scores > student.scores ? topStudents : student);
-console.log(bestStudent)
-
-//13. Найдите сумму баллов всех студентов (reduce)
-let scoresSum = students.reduce((sum,student) => sum + student.scores, 0 );
-console.log(scoresSum)
+const addScrores = (array)=>{
+    const result = [];
+    const getValueForResult = el => ({...el, scores: el.scores + 10})
+    for (let i = 0; i < array.length;i++){
+        const newValue = getValueForResult(array[i])
+        result[i] = newValue
+    }
+    return result
+}
+console.log(addScrores(students))
 
 
+const mapFunction = (array, callback) => {
+    const result = [];
+    for (let i = 0; i < array.length;i++){
+        const newValue = callback(array[i])
+        result[i] = newValue
+    }
+    return result
 
+};
+
+console.log(mapFunction(students, el => el.name))
+console.log(mapFunction(students, el => el.scores))
+console.log(mapFunction(students, el => ({...el, scores: el.scores + 10})))
+
+
+const filterFunction = (array, callback) => {
+    const result = [];
+    for (let i = 0; i < array.length;i++){
+        if (callback(array[i]) === true){
+            result.push(array[i])
+        }
+    }
+    return result
+};
+
+console.log(filterFunction(students, el => el.isMarried))
+console.log(filterFunction(students, el => el.scores > 90))
+
+const findFunction = (array, callback) => {
+    for (let i = 0; i < array.length;i++){
+        if (callback(array[i]) === true){
+            return array[i]
+        }
+    }
+};
+
+
+console.log(findFunction(students, el => el.name === "Alex"))
+
+console.log(students.map(st => {
+    return `Student ${st.name}: ${st.age}, ${st.scores}. ${st.isMarried ? "Married" : "Not married"}.`
+}))
+
+
+console.log(students.map(st => st.name === "Nick" ? {...st, isMarried:true} : st))
